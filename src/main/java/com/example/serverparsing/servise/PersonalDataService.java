@@ -12,7 +12,7 @@ public interface PersonalDataService {
 
     Optional<PersonalData> getPersonDataId(int personId);
 
-    List<PersonalData> findAllPersonData(String cityResidence,
+    List<PersonDataDto> findAllPersonData(String cityResidence,
                                          Integer wages,
                                          String foreignLanguage,
                                          String foreignLanguageLevel,

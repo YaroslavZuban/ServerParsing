@@ -22,10 +22,10 @@ public class PersonalDataServiceImpl implements PersonalDataService {
 
     @Override
     public List<PersonDataDto> getListPersonalDataAll(int pageNumber) {
-        int resumeCountPage = 30; // количество резюме
+        int resumeCountPage = 30;
 
-        int start = (pageNumber - 1) * resumeCountPage; // Начальный индекс, начиная с нуля для первой страницы
-        int end = start + resumeCountPage; // Конечный индекс
+        int start = (pageNumber - 1) * resumeCountPage;
+        int end = start + resumeCountPage;
 
         return personalDataRepository.findDtoAll(start, end);
     }
@@ -36,7 +36,7 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     }
 
     @Override
-    public List<PersonalData> findAllPersonData(String cityResidence,
+    public List<PersonDataDto> findAllPersonData(String cityResidence,
                                                 Integer wages,
                                                 String foreignLanguage,
                                                 String foreignLanguageLevel,
@@ -59,6 +59,8 @@ public class PersonalDataServiceImpl implements PersonalDataService {
 
         List<Predicate> predicates = new ArrayList<>();
 
+        // Обработка персональных данных (ЗП)
+
         if (wages != null) {
             Predicate wagesPredicate = builder.and(
                     builder.isNotNull(root.get("wages")),
@@ -68,10 +70,14 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             predicates.add(wagesPredicate);
         }
 
+        // Обработка города
+
         if (cityResidence != null) {
             Join<PersonalData, Habitation> habitationJoin = root.join("habitation", JoinType.INNER);
             predicates.add(builder.equal(habitationJoin.get("city"), cityResidence));
         }
+
+        // Обработка пола
 
         if (gender != null) {
             Join<PersonalData, Gender> genderJoin = root.join("gender", JoinType.INNER);
@@ -110,22 +116,6 @@ public class PersonalDataServiceImpl implements PersonalDataService {
                     .getEducationLevelPredicate(root, builder, educationLevel));
         }
 
-       /* addIfNotNull(predicates, specificationServer
-                .getEducationalInstitutionPredicate(root, builder, educationalInstitution));
-
-
-        addIfNotNull(predicates, specificationServer
-                .getSpecializationPredicate(root, builder, specialization));
-
-
-        addIfNotNull(predicates, specificationServer
-                .getEndingPredicate(root, builder, graduationYear));
-
-
-        addIfNotNull(predicates, specificationServer
-                .getEducationLevelPredicate(root, builder, educationLevel));*/
-
-
         // Работа с данными из дополнительной информации
 
         if (businessTrips != null && !businessTrips.isEmpty()) {
@@ -148,26 +138,11 @@ public class PersonalDataServiceImpl implements PersonalDataService {
                     builder, rightsCategory));
         }
 
-       /* addIfNotNull(predicates, informationService.getBusinessTripsPredicate(root,
-                builder, businessTrips));
-
-
-        addIfNotNull(predicates, informationService.getLanguagePredicate(root,
-                builder, foreignLanguage));
-
-        addIfNotNull(predicates, informationService.getLanguageLevelPredicate(root,
-                builder, foreignLanguageLevel));
-
-        addIfNotNull(predicates, informationService.getLicenceCategoryPredicate(root,
-                builder, rightsCategory));*/
-
-
         query.where(predicates.toArray(new Predicate[0]));
 
-        //List<PersonalData> personalDataList = entityManager.createQuery(query).getResultList();
+        List<PersonalData> personalDataList = entityManager.createQuery(query).getResultList();
 
-        return entityManager.createQuery(query).getResultList();
-        //return conversionPersonData(personalDataList);
+        return conversionPersonData(personalDataList);
     }
 
     private Predicate getPredicateWorkSchedule(Root<PersonalData> root, CriteriaBuilder builder,
@@ -197,12 +172,6 @@ public class PersonalDataServiceImpl implements PersonalDataService {
         predicates.add(workScheduleJoin.get("name").in(citizenship));
 
         return builder.and(predicates.toArray(new Predicate[0]));
-    }
-
-    private void addIfNotNull(List<Predicate> predicates, Predicate predicate) {
-        if (predicate != null) {
-            predicates.add(predicate);
-        }
     }
 
     private List<PersonDataDto> conversionPersonData(List<PersonalData> personalDataList) {
