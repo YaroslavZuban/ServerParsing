@@ -1,4 +1,4 @@
-package com.example.serverparsing.dto;
+package com.example.serverparsing.entity;
 
 import com.example.serverparsing.entity.CitizenshipType;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +11,6 @@ public record PersonDataDto(
         int id,
         @NotNull
         String name,
-        @NotNull
         String title,
         Integer wages,
         String skills) {
