@@ -1,6 +1,8 @@
 package com.example.serverparsing.servise;
 
 import com.example.serverparsing.entity.*;
+import com.example.serverparsing.job.FindSkillsPersonalData;
+import com.example.serverparsing.job.SkillCombinations;
 import com.example.serverparsing.repository.PersonalDataRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -37,20 +39,20 @@ public class PersonalDataServiceImpl implements PersonalDataService {
 
     @Override
     public List<PersonDataDto> findAllPersonData(String cityResidence,
-                                                Integer wages,
-                                                String foreignLanguage,
-                                                String foreignLanguageLevel,
-                                                List<String> educations,
-                                                String gender,
-                                                List<String> workSchedules,
-                                                List<String> rightsCategory,
-                                                List<String> businessTrips,
-                                                String educationalInstitution,
-                                                String specialization,
-                                                Integer graduationYear,
-                                                List<String> skills,
-                                                List<String> citizenship,
-                                                String educationLevel) {
+                                                 Integer wages,
+                                                 String foreignLanguage,
+                                                 String foreignLanguageLevel,
+                                                 List<String> educations,
+                                                 String gender,
+                                                 List<String> workSchedules,
+                                                 List<String> rightsCategory,
+                                                 List<String> businessTrips,
+                                                 String educationalInstitution,
+                                                 String specialization,
+                                                 Integer graduationYear,
+                                                 List<String> skills,
+                                                 List<String> citizenship,
+                                                 String educationLevel) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
@@ -142,6 +144,11 @@ public class PersonalDataServiceImpl implements PersonalDataService {
 
         List<PersonalData> personalDataList = entityManager.createQuery(query).getResultList();
 
+        if (skills != null && !skills.isEmpty()) {
+            List<PersonalData> skillsSortPerson = findSkillPersonalData(personalDataList, skills);
+            return conversionPersonData(skillsSortPerson);
+        }
+
         return conversionPersonData(personalDataList);
     }
 
@@ -172,6 +179,18 @@ public class PersonalDataServiceImpl implements PersonalDataService {
         predicates.add(workScheduleJoin.get("name").in(citizenship));
 
         return builder.and(predicates.toArray(new Predicate[0]));
+    }
+
+    private List<PersonalData> findSkillPersonalData(List<PersonalData> personalDataList, List<String> skill) {
+        if (skill == null || skill.isEmpty()) {
+            return personalDataList;
+        }
+
+        SkillCombinations skillCombinations = new SkillCombinations();
+        List<List<String>> skillsCombinations = skillCombinations.getAllCombinations(skill);
+
+        FindSkillsPersonalData findSkillsPersonalData = new FindSkillsPersonalData();
+        return findSkillsPersonalData.findPersonalData(personalDataList, skillsCombinations);
     }
 
     private List<PersonDataDto> conversionPersonData(List<PersonalData> personalDataList) {
