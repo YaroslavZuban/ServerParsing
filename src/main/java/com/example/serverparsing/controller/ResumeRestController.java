@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -16,16 +17,6 @@ import java.util.NoSuchElementException;
 @RequestMapping("resume-api/resume")
 public class ResumeRestController {
     private final PersonalDataService personalDataService;
-
-/*    @GetMapping
-    public ResponseEntity<?> findPersonalDataAll(@RequestParam(defaultValue = "1") int pageNumber) {
-        if (pageNumber < 1) {
-            return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body("Invalid pageNumber: " + pageNumber);
-        }
-
-        List<PersonDataDto> list = personalDataService.getListPersonalDataAll(pageNumber);
-        return ResponseEntity.ok().body(list);
-    }*/
 
     @GetMapping
     public ResponseEntity<?> filterPersonData(@RequestParam(value = "cityResidence", required = false) String cityResidence,
@@ -65,7 +56,7 @@ public class ResumeRestController {
     @GetMapping("/{resumeId:\\d+}")
     public ResponseEntity<?> findPersonData(@PathVariable(value = "resumeId") int resumeId) {
         PersonalData personalData = personalDataService.getPersonDataId(resumeId)
-                .orElseThrow(() -> new NoSuchElementException("Данного резюме нет"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Данного резюме нет"));
 
         return ResponseEntity.ok().body(personalData);
     }

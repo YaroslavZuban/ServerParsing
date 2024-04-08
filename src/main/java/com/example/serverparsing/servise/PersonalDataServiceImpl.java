@@ -200,6 +200,7 @@ public class PersonalDataServiceImpl implements PersonalDataService {
         }
 
         Collections.reverse(personalDataList);
+
         return getPersonDataDtos(personalDataList, start);
     }
 
@@ -223,6 +224,7 @@ public class PersonalDataServiceImpl implements PersonalDataService {
 
             personDataDtoList.add(newPersonDataDto);
         }
+
         return personDataDtoList;
     }
 }
