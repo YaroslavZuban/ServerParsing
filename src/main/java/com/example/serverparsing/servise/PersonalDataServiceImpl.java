@@ -9,8 +9,10 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.expression.Lists;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,15 +24,8 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     private final SpecificationService specificationServer;
     private final InformationService informationService;
 
-    @Override
-    public List<PersonDataDto> getListPersonalDataAll(int pageNumber) {
-        int resumeCountPage = 30;
+    private final static int RESUME_COUNT_PAGE = 30;
 
-        int start = (pageNumber - 1) * resumeCountPage;
-        int end = start + resumeCountPage;
-
-        return personalDataRepository.findDtoAll(start, end);
-    }
 
     @Override
     public Optional<PersonalData> getPersonDataId(int personId) {
@@ -52,7 +47,8 @@ public class PersonalDataServiceImpl implements PersonalDataService {
                                                  Integer graduationYear,
                                                  List<String> skills,
                                                  List<String> citizenship,
-                                                 String educationLevel) {
+                                                 String educationLevel,
+                                                 int pageNumber) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
@@ -146,10 +142,10 @@ public class PersonalDataServiceImpl implements PersonalDataService {
 
         if (skills != null && !skills.isEmpty()) {
             List<PersonalData> skillsSortPerson = findSkillPersonalData(personalDataList, skills);
-            return conversionPersonData(skillsSortPerson);
+            return conversionPersonData(skillsSortPerson, pageNumber);
         }
 
-        return conversionPersonData(personalDataList);
+        return conversionPersonData(personalDataList, pageNumber);
     }
 
     private Predicate getPredicateWorkSchedule(Root<PersonalData> root, CriteriaBuilder builder,
@@ -193,14 +189,29 @@ public class PersonalDataServiceImpl implements PersonalDataService {
         return findSkillsPersonalData.findPersonalData(personalDataList, skillsCombinations);
     }
 
-    private List<PersonDataDto> conversionPersonData(List<PersonalData> personalDataList) {
+    private List<PersonDataDto> conversionPersonData(List<PersonalData> personalDataList, int pageNumber) {
         if (personalDataList == null || personalDataList.isEmpty()) {
             return null;
         }
 
-        List<PersonDataDto> personDataDtoList = new ArrayList<>(personalDataList.size());
+        int start = (pageNumber - 1) * RESUME_COUNT_PAGE;
 
-        for (PersonalData person : personalDataList) {
+        if (start >= personalDataList.size()) {
+            return null;
+        }
+
+        Collections.reverse(personalDataList);
+        return getPersonDataDtos(personalDataList, start);
+    }
+
+    private List<PersonDataDto> getPersonDataDtos(List<PersonalData> personalDataList, int start) {
+        int end = Math.min(start + RESUME_COUNT_PAGE, personalDataList.size());
+
+        List<PersonDataDto> personDataDtoList = new ArrayList<>(end - start);
+
+        for (int i = start; i < end; i++) {
+            PersonalData person = personalDataList.get(i);
+
             Information information = person.getInformation();
             String skill = null;
 
@@ -213,7 +224,6 @@ public class PersonalDataServiceImpl implements PersonalDataService {
 
             personDataDtoList.add(newPersonDataDto);
         }
-
         return personDataDtoList;
     }
 }

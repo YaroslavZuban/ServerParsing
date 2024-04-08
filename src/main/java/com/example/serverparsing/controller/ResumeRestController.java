@@ -42,7 +42,8 @@ public class ResumeRestController {
                                               @RequestParam(value = "graduationYear", required = false) Integer graduationYear,
                                               @RequestParam(value = "skills", required = false) List<String> skills,
                                               @RequestParam(value = "citizenship", required = false) List<String> citizenship,
-                                              @RequestParam(value = "educationLevel", required = false) String educationLevel) {
+                                              @RequestParam(value = "educationLevel", required = false) String educationLevel,
+                                              @RequestParam(defaultValue = "1") int pageNumber) {
         return ResponseEntity.ok().body(this.personalDataService.findAllPersonData(cityResidence,
                 wages,
                 foreignLanguage,
@@ -57,7 +58,8 @@ public class ResumeRestController {
                 graduationYear,
                 skills,
                 citizenship,
-                educationLevel));
+                educationLevel,
+                pageNumber));
     }
 
     @GetMapping("/{resumeId:\\d+}")
