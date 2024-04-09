@@ -69,14 +69,14 @@ public class PersonalDataServiceImpl implements PersonalDataService {
 
         // Обработка города
 
-        if (cityResidence != null) {
+        if (cityResidence != null && !cityResidence.isEmpty()) {
             Join<PersonalData, Habitation> habitationJoin = root.join("habitation", JoinType.INNER);
             predicates.add(builder.equal(habitationJoin.get("city"), cityResidence));
         }
 
         // Обработка пола
 
-        if (gender != null) {
+        if (gender != null && !gender.isEmpty()) {
             Join<PersonalData, Gender> genderJoin = root.join("gender", JoinType.INNER);
 
             Predicate gendersPredicate = builder.equal(genderJoin.get("type"), gender);

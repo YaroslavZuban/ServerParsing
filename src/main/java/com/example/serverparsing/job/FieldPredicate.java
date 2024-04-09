@@ -16,7 +16,6 @@ public class FieldPredicate {
         }
 
         Join<E, U> tableJoin = root.join(objectName, JoinType.INNER);
-
         return builder.equal(tableJoin.get(field), findField);
     }
 }

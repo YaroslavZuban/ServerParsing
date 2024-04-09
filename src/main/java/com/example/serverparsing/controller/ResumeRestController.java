@@ -35,6 +35,8 @@ public class ResumeRestController {
                                               @RequestParam(value = "citizenship", required = false) List<String> citizenship,
                                               @RequestParam(value = "educationLevel", required = false) String educationLevel,
                                               @RequestParam(defaultValue = "1") int pageNumber) {
+
+        System.out.println("Запрос пришел");
         return ResponseEntity.ok().body(this.personalDataService.findAllPersonData(cityResidence,
                 wages,
                 foreignLanguage,
