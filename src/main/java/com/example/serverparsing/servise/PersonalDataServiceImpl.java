@@ -23,7 +23,7 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     private final SpecificationService specificationServer;
     private final InformationService informationService;
 
-    private final static int RESUME_COUNT_PAGE = 30;
+    private final static int RESUME_COUNT_PAGE = 15;
 
 
     @Override
