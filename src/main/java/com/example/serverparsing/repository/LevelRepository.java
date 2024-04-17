@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface LevelRepository extends JpaRepository<Level, Integer> {
-    @Query(value = "select knowledge_level from level", nativeQuery = true)
+    @Query(value = "select knowledge_level from level ORDER BY knowledge_level", nativeQuery = true)
     List<String> getLanguageLevelAll();
 }

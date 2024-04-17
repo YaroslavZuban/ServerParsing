@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface HabitationRepository extends JpaRepository<Habitation, Integer> {
-    @Query(value = "SELECT city FROM habitation", nativeQuery = true)
+    @Query(value = "SELECT city FROM habitation ORDER BY city", nativeQuery = true)
     List<String> getCityAll();
 }

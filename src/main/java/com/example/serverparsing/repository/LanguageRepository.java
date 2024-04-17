@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface LanguageRepository extends JpaRepository<Language, Integer> {
-    @Query(value = "select l.name from language as l", nativeQuery = true)
+    @Query(value = "select l.name from language as l ORDER BY l.name", nativeQuery = true)
     List<String> getAllName();
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface EducationLevelRepository extends JpaRepository<EducationType, Integer> {
-    @Query(value = "SELECT education_level FROM education_type", nativeQuery = true)
+    @Query(value = "SELECT education_level FROM education_type ORDER BY education_level", nativeQuery = true)
     List<String> getEducationTypeAll();
 
 }

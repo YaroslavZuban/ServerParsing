@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface LicenceCategoryRepository extends JpaRepository<LicenceCategory, Integer> {
-    @Query(value = "SELECT category FROM licence_category", nativeQuery = true)
+    @Query(value = "SELECT category FROM licence_category ORDER BY category", nativeQuery = true)
     List<String> getLicenceCategoriesAll();
 }
