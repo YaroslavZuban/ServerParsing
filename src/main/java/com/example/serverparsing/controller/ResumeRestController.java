@@ -17,7 +17,6 @@ import java.util.NoSuchElementException;
 @RequestMapping("resume-api/resume")
 public class ResumeRestController {
     private final PersonalDataService personalDataService;
-
     @GetMapping
     public ResponseEntity<?> filterPersonData(@RequestParam(value = "cityResidence", required = false) String cityResidence,
                                               @RequestParam(value = "wages", required = false) Integer wages,

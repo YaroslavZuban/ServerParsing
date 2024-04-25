@@ -10,10 +10,7 @@ import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -145,6 +142,16 @@ public class PersonalDataServiceImpl implements PersonalDataService {
         }
 
         return conversionPersonData(personalDataList, pageNumber);
+    }
+
+    @Override
+    public Map<String, Integer> analyticSkillsUniversity(String university, List<String> skills) {
+        return null;
+    }
+
+    @Override
+    public Map<String, Integer> analyticSkillsSpecialties(String university, String specialties, List<String> skills) {
+        return null;
     }
 
     private Predicate getPredicateWorkSchedule(Root<PersonalData> root, CriteriaBuilder builder,
