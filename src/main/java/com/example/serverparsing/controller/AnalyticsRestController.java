@@ -21,44 +21,25 @@ public class AnalyticsRestController {
     private final PersonalDataService personalDataService;
 
     @GetMapping("/skills-university")// Написал запрос
-    public ResponseEntity<Map<String, Integer>> getSkillsUniversity(@RequestParam(value = "university", required = false) String university,
-                                                                    @RequestParam(value = "skills", required = false) List<String> skills) {
+    public ResponseEntity<Map<String, Integer>> getSkillsUniversity(@RequestParam(value = "university") String university,
+                                                                    @RequestParam(value = "skills") List<String> skills) {
         return ResponseEntity.ok().body(this.personalDataService.analyticSkillsUniversity(university, skills));
     }
 
     @GetMapping("/skills-specialties")
     // Написал запрос
-    public ResponseEntity<Map<String, Integer>> getSkillsSpecialties(@RequestParam(value = "university", required = false) String university,
-                                                                     @RequestParam(value = "specialties", required = false) String specialties,
-                                                                     @RequestParam(value = "skills", required = false) List<String> skills) {
+    public ResponseEntity<Map<String, Integer>> getSkillsSpecialties(@RequestParam(value = "university") String university,
+                                                                     @RequestParam(value = "specialties") String specialties,
+                                                                     @RequestParam(value = "skills") List<String> skills) {
         return ResponseEntity.ok().body(this.personalDataService.analyticSkillsSpecialties(university, specialties, skills));
     }
 
     @GetMapping("/skills-specialties-year")
-        // Написал запрос
-    Map<String, Integer> getSkillsSpecialtiesYear(@RequestParam(value = "university", required = false) String university,
-                                                  @RequestParam(value = "specialties", required = false) String specialties,
-                                                  @RequestParam(value = "year", required = false) Integer year,
-                                                  @RequestParam(value = "skills", required = false) List<String> skills) {
-        return null;
-    }
-
-    /*
-     * */
-    @GetMapping("/specialties-year-foreign-language")
-    Map<String, Integer> getSpecialtiesYearForeignLanguage(@RequestParam(value = "university", required = false) String university,
-                                                           @RequestParam(value = "specialties", required = false) String specialties,
-                                                           @RequestParam(value = "year", required = false) Integer year) {
-        return null;
-    }
-
-    /*
-     * */
-    @GetMapping("/specialties-year-foreign-language-level")
-    Map<String, Integer> getForeignLanguageLevel(@RequestParam(value = "university", required = false) String university,
-                                                 @RequestParam(value = "specialties", required = false) String specialties,
-                                                 @RequestParam(value = "year", required = false) Integer year,
-                                                 @RequestParam(value = "foreignLanguage", required = false) List<String> foreignLanguage) {
-        return null;
+    // Написал запрос
+    public ResponseEntity<Map<String, Integer>> getSkillsSpecialtiesYear(@RequestParam(value = "university") String university,
+                                                                         @RequestParam(value = "specialties") String specialties,
+                                                                         @RequestParam(value = "year") Integer year,
+                                                                         @RequestParam(value = "skills") List<String> skills) {
+        return ResponseEntity.ok().body(this.personalDataService.analyticSkillsSpecialtiesYear(university, specialties, year, skills));
     }
 }

@@ -1,8 +1,10 @@
 package com.example.serverparsing.servise;
 
+import com.aspose.cells.Workbook;
 import com.example.serverparsing.entity.PersonDataDto;
 import com.example.serverparsing.entity.PersonalData;
 import jakarta.persistence.criteria.CriteriaBuilder;
+import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -33,4 +35,12 @@ public interface PersonalDataService {
     Map<String, Integer> analyticSkillsUniversity(String university, List<String> skills);
 
     Map<String, Integer> analyticSkillsSpecialties(String university, String specialties, List<String> skills);
+
+    Map<String, Integer> analyticSkillsSpecialtiesYear(String university, String specialties, Integer year, List<String> skills);
+
+    Workbook graphExcelSkillsUniversity(String university, List<String> skills);
+
+    Workbook graphExcelSkillsSpecialties(String university, String specialties, List<String> skills);
+
+    Workbook graphExcelSkillsSpecialtiesYear(String university, String specialties, Integer year, List<String> skills);
 }

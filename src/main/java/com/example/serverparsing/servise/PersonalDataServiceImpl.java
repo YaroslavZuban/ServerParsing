@@ -1,13 +1,18 @@
 package com.example.serverparsing.servise;
 
+import com.aspose.cells.Workbook;
 import com.example.serverparsing.entity.*;
+import com.example.serverparsing.graph_excel.GraphExcelFile;
+import com.example.serverparsing.graph_excel.GraphExcelFileImpl;
 import com.example.serverparsing.job.FindSkillsPersonalData;
 import com.example.serverparsing.job.SkillCombinations;
+import com.example.serverparsing.p_enum.AnalyticTitleEnum;
 import com.example.serverparsing.repository.PersonalDataRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -146,12 +151,98 @@ public class PersonalDataServiceImpl implements PersonalDataService {
 
     @Override
     public Map<String, Integer> analyticSkillsUniversity(String university, List<String> skills) {
-        return null;
+        if (university == null || university.isEmpty()) {
+            return null;
+        }
+
+        if (skills == null || skills.isEmpty()) {
+            return null;
+        }
+
+        Map<String, Integer> statistics = new HashMap<>();
+
+        for (String skill : skills) {
+            Integer resultSkill = this.personalDataRepository.getSkillsUniversity(university, skill);
+
+            statistics.put(skill, Objects.requireNonNullElse(resultSkill, 0));
+        }
+
+        return statistics;
     }
 
     @Override
     public Map<String, Integer> analyticSkillsSpecialties(String university, String specialties, List<String> skills) {
-        return null;
+        if (university == null || university.isEmpty()) {
+            return null;
+        }
+
+        if (specialties == null || specialties.isEmpty()) {
+            return null;
+        }
+
+        if (skills == null || skills.isEmpty()) {
+            return null;
+        }
+
+        Map<String, Integer> statistics = new HashMap<>();
+
+        for (String skill : skills) {
+            Integer resultSkill = this.personalDataRepository.getSkillsSpecialties(university, specialties, skill);
+
+            statistics.put(skill, Objects.requireNonNullElse(resultSkill, 0));
+        }
+
+        return statistics;
+    }
+
+    @Override
+    public Map<String, Integer> analyticSkillsSpecialtiesYear(String university, String specialties, Integer year, List<String> skills) {
+        if (university == null || university.isEmpty()) {
+            return null;
+        }
+
+        if (specialties == null || specialties.isEmpty()) {
+            return null;
+        }
+
+        if (year == null) {
+            return null;
+        }
+
+        if (skills == null || skills.isEmpty()) {
+            return null;
+        }
+
+        Map<String, Integer> statistics = new HashMap<>();
+
+        for (String skill : skills) {
+            Integer resultSkill = this.personalDataRepository.getSkillsSpecialtiesYear(university, specialties, year, skill);
+
+            statistics.put(skill, Objects.requireNonNullElse(resultSkill, 0));
+        }
+
+        return statistics;
+    }
+
+    @Override
+    public Workbook graphExcelSkillsUniversity(String university, List<String> skills) {
+        Map<String, Integer> result = analyticSkillsUniversity(university, skills);
+
+        return new GraphExcelFileImpl().getHistogramFile(result, AnalyticTitleEnum.ANALYTIC_TITLE_SKILLS_UNIVERSITY);
+    }
+
+    @Override
+    public Workbook graphExcelSkillsSpecialties(String university, String specialties, List<String> skills) {
+        Map<String, Integer> result = analyticSkillsSpecialties(university, specialties, skills);
+
+        return new GraphExcelFileImpl().getHistogramFile(result, AnalyticTitleEnum.ANALYTIC_TITLE_SKILLS_SPECIALTIES);
+    }
+
+    @Override
+    public Workbook graphExcelSkillsSpecialtiesYear(String university, String specialties, Integer year, List<String> skills) {
+        Map<String, Integer> result = analyticSkillsSpecialties(university, specialties, skills);
+
+        return new GraphExcelFileImpl().getHistogramFile(result, AnalyticTitleEnum.ANALYTIC_TITLE_SKILLS_SPECIALTIES_YEAR);
     }
 
     private Predicate getPredicateWorkSchedule(Root<PersonalData> root, CriteriaBuilder builder,
