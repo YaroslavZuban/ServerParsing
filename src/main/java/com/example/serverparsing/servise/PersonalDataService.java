@@ -38,9 +38,9 @@ public interface PersonalDataService {
 
     Map<String, Integer> analyticSkillsSpecialtiesYear(String university, String specialties, Integer year, List<String> skills);
 
-    Workbook graphExcelSkillsUniversity(String university, List<String> skills);
+    Resource graphExcelSkillsUniversity(String university, List<String> skills);
 
-    Workbook graphExcelSkillsSpecialties(String university, String specialties, List<String> skills);
+    Resource graphExcelSkillsSpecialties(String university, String specialties, List<String> skills);
 
-    Workbook graphExcelSkillsSpecialtiesYear(String university, String specialties, Integer year, List<String> skills);
+    Resource graphExcelSkillsSpecialtiesYear(String university, String specialties, Integer year, List<String> skills);
 }

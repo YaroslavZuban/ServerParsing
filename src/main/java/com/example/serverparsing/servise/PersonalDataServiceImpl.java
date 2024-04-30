@@ -59,7 +59,6 @@ public class PersonalDataServiceImpl implements PersonalDataService {
         List<Predicate> predicates = new ArrayList<>();
 
         // Обработка персональных данных (ЗП)
-
         if (wages != null) {
             Predicate wagesPredicate = builder.and(
                     builder.isNotNull(root.get("wages")),
@@ -159,9 +158,10 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             return null;
         }
 
+        List<String> uniqueSkills = getUniqueKnowledgeList(skills);
         Map<String, Integer> statistics = new HashMap<>();
 
-        for (String skill : skills) {
+        for (String skill : uniqueSkills) {
             Integer resultSkill = this.personalDataRepository.getSkillsUniversity(university, skill);
 
             statistics.put(skill, Objects.requireNonNullElse(resultSkill, 0));
@@ -184,9 +184,10 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             return null;
         }
 
+        List<String> uniqueSkills = getUniqueKnowledgeList(skills);
         Map<String, Integer> statistics = new HashMap<>();
 
-        for (String skill : skills) {
+        for (String skill : uniqueSkills) {
             Integer resultSkill = this.personalDataRepository.getSkillsSpecialties(university, specialties, skill);
 
             statistics.put(skill, Objects.requireNonNullElse(resultSkill, 0));
@@ -213,9 +214,10 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             return null;
         }
 
+        List<String> uniqueSkills = getUniqueKnowledgeList(skills);
         Map<String, Integer> statistics = new HashMap<>();
 
-        for (String skill : skills) {
+        for (String skill : uniqueSkills) {
             Integer resultSkill = this.personalDataRepository.getSkillsSpecialtiesYear(university, specialties, year, skill);
 
             statistics.put(skill, Objects.requireNonNullElse(resultSkill, 0));
@@ -225,22 +227,28 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     }
 
     @Override
-    public Workbook graphExcelSkillsUniversity(String university, List<String> skills) {
-        Map<String, Integer> result = analyticSkillsUniversity(university, skills);
+    public Resource graphExcelSkillsUniversity(String university, List<String> skills) {
+        List<String> uniqueSkills = getUniqueKnowledgeList(skills);
+
+        Map<String, Integer> result = analyticSkillsUniversity(university, uniqueSkills);
 
         return new GraphExcelFileImpl().getHistogramFile(result, AnalyticTitleEnum.ANALYTIC_TITLE_SKILLS_UNIVERSITY);
     }
 
     @Override
-    public Workbook graphExcelSkillsSpecialties(String university, String specialties, List<String> skills) {
-        Map<String, Integer> result = analyticSkillsSpecialties(university, specialties, skills);
+    public Resource graphExcelSkillsSpecialties(String university, String specialties, List<String> skills) {
+        List<String> uniqueSkills = getUniqueKnowledgeList(skills);
+
+        Map<String, Integer> result = analyticSkillsSpecialties(university, specialties, uniqueSkills);
 
         return new GraphExcelFileImpl().getHistogramFile(result, AnalyticTitleEnum.ANALYTIC_TITLE_SKILLS_SPECIALTIES);
     }
 
     @Override
-    public Workbook graphExcelSkillsSpecialtiesYear(String university, String specialties, Integer year, List<String> skills) {
-        Map<String, Integer> result = analyticSkillsSpecialties(university, specialties, skills);
+    public Resource graphExcelSkillsSpecialtiesYear(String university, String specialties, Integer year, List<String> skills) {
+        List<String> uniqueSkills = getUniqueKnowledgeList(skills);
+
+        Map<String, Integer> result = analyticSkillsSpecialties(university, specialties, uniqueSkills);
 
         return new GraphExcelFileImpl().getHistogramFile(result, AnalyticTitleEnum.ANALYTIC_TITLE_SKILLS_SPECIALTIES_YEAR);
     }
@@ -324,5 +332,10 @@ public class PersonalDataServiceImpl implements PersonalDataService {
         }
 
         return personDataDtoList;
+    }
+
+    private List<String> getUniqueKnowledgeList(List<String> skills) {
+        Set<String> uniqueKnowledge = new HashSet<>(skills);
+        return uniqueKnowledge.stream().toList();
     }
 }

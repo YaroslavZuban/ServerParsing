@@ -4,30 +4,27 @@ package com.example.serverparsing.graph_excel;
 import com.aspose.cells.*;
 import com.example.serverparsing.p_enum.AnalyticTitleEnum;
 
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Map;
 
 
 public class GraphExcelFileImpl implements GraphExcelFile {
     @Override
-    public Workbook getHistogramFile(Map<String, Integer> statistics, AnalyticTitleEnum analyticTitleEnum) {
-        if (statistics != null) {
+    public Resource getHistogramFile(Map<String, Integer> statistics, AnalyticTitleEnum analyticTitleEnum) {
+        if (statistics == null) {
             return null;
         }
 
         Workbook workbook = new Workbook();
 
-        Worksheet worksheet = workbook.getWorksheets().get("List 1");
-
+        Worksheet worksheet = workbook.getWorksheets().get(0);
 
         int row = 0;
 
-        worksheet.getCells().get(0, 1).putValue("Значение");
+        worksheet.getCells().get(0, 1).putValue("Количество");
 
         for (Map.Entry<String, Integer> entry : statistics.entrySet()) {
             String key = entry.getKey();
@@ -39,20 +36,26 @@ public class GraphExcelFileImpl implements GraphExcelFile {
             worksheet.getCells().get(row, 1).putValue(value);
         }
 
-        int charIndex = worksheet.getCharts().add(ChartType.LINE, 0, 2,
+        int charIndex = worksheet.getCharts().add(ChartType.COLUMN, 0, 3,
                 15, 7);
 
         Chart chart = worksheet.getCharts().get(charIndex);
+        row++;
 
         chart.setChartDataRange("A1:B" + row, true);
-        chart.setName(analyticTitleEnum.getTitle());
+
+        return toResource(workbook);
+    }
+
+    public Resource toResource(Workbook workbook) {
+        var outputStream = new ByteArrayOutputStream();
 
         try {
-            workbook.save(analyticTitleEnum.getFileName(), SaveFormat.XLSX);
+            workbook.save(outputStream, SaveFormat.XLSX);
         } catch (Exception e) {
-            return null;
+            throw new RuntimeException(e);
         }
 
-        return workbook;
+        return new ByteArrayResource(outputStream.toByteArray());
     }
 }
